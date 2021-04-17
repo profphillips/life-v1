@@ -1,0 +1,40 @@
+.navbar {
+  background-color: #555;
+  margin: 0px 0px;
+  padding: 0px 0px;
+  overflow: auto;
+  list-style: none;
+}
+
+.navbar > li > a:hover {
+  background-color: gold;
+}
+
+.nav-item {
+  float: left;
+  text-align: center;
+  margin: 5px 0px 5px 20px;
+  color: red;
+  background: #ccc;
+  display: block;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: black;
+  font-size: small;
+  display: block;
+  width: 60px;
+  height: 20px;
+}
+
+.nav-active {
+  background-color: gold;
+  font-weight: bold;
+}
+
+@media print {
+  .navbar {
+    display: none;
+  }
+}
