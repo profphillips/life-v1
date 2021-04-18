@@ -1,11 +1,11 @@
-// home.js by John Phillips on 2021-04017
+// home.js by John Phillips on 2021-04-17 revised 2021-04-18
 // This implements John Conway's Game of Life rules.
 
 import React, { useState, useEffect } from "react";
 
 // ***** Main function *******************************************************
 export default function Home(props) {
-  let { xCellCount = 100, yCellCount = 100 } = props; // size of cells array
+  let { xCellCount = 90, yCellCount = 50 } = props; // size of cells array
   let [cells, setCells] = useState([]); // 2d cells array
   const [isLoading, setIsLoading] = useState(false); // is page loading
   const [isRunning, setIsRunning] = useState(true); // is simulation running
@@ -199,16 +199,22 @@ export default function Home(props) {
         {isLoading ? <div> Loading results...</div> : makeTable()}
 
         <div className="life-controls">
-          <button onClick={() => (isRunning ? setIsRunning(false) : setIsRunning(true))}>
+          <button
+            onClick={() =>
+              isRunning ? setIsRunning(false) : setIsRunning(true)
+            }
+          >
             {isRunning ? "Pause" : "Run"}
           </button>
           <button onClick={() => calcNextGen()}>Next</button>
-          <button onClick={() => (isColor ? setIsColor(false) : setIsColor(true))}>
+          <button
+            onClick={() => (isColor ? setIsColor(false) : setIsColor(true))}
+          >
             {isColor ? "B/W" : "Color"}
           </button>
           <button onClick={() => setDelay(5000)}>Slow</button>
           <button onClick={() => setDelay(1000)}>Medium</button>
-          <button onClick={() => setDelay(100)}>Fast</button>
+          <button onClick={() => setDelay(200)}>Fast</button>
           <button onClick={() => getRandomBoard()}>Random</button>
           <button onClick={() => setCells(zeroArray)}>Clear</button>
           <button onClick={() => getLocalBoard(0)}>Load-0</button>

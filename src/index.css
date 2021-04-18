@@ -19,6 +19,7 @@ code {
   padding: 0px;
   background: black;
   color: white;
+  /* margin: 25px; */
 }
 
 /* @media screen and (min-width: 500px) {
@@ -58,12 +59,20 @@ table tr:last-child td:last-child {
 }
 
 .cell {
-  height: 1vw;
+  height: 1.9vh;
   width: 1vw;
   border-radius: 1px;
   background-color: #333;
-  transition: background-color 0.4s ease;
+  /* transition: background-color 0.4s ease; */
 }
+
+@media screen and (max-width: 500px) {
+  .cell {
+    height: 1vh;
+    width: 1vw;
+  }
+}
+
 .cell-0 {
   background-color: #333;
 }
