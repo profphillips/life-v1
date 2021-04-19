@@ -11,21 +11,31 @@ export default function Home(props) {
   const [isRunning, setIsRunning] = useState(true); // is simulation running
   const [isColor, setIsColor] = useState(true); // colors or b/w
   const [delay, setDelay] = useState(1000); // amount of delay for redraws
+  const [iteration, setIteration] = useState(0); // current iteration of sim
+  const [isRandom, setIsRandom] = useState(true);
+  const [currentSlot, setCurrentSlot] = useState(0);
   const zeroArray = new Array(yCellCount) // 2d array filled with zeros
     .fill(0)
     .map(() => new Array(xCellCount).fill(0));
 
+  // Create a random array of cells when the app is started.
   useEffect(() => {
     getRandomBoard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ignore warning - empty dependency array [] so only executed once
 
+  // Automatically calculates the next generation in delay milliseconds.
   useEffect(() => {
-    // console.log("second useEffect runs whenever the dataArray changes");
-    // console.log(cells);
     if (isRunning) {
       const timer = setTimeout(() => calcNextGen(), delay);
       return () => clearTimeout(timer);
+    }
+  });
+
+  // Restarts the simulation after 300 iterations.
+  useEffect(() => {
+    if (iteration >= 100) {
+      isRandom ? getRandomBoard() : getLocalBoard(currentSlot);
     }
   });
 
@@ -35,18 +45,32 @@ export default function Home(props) {
     window.localStorage.setItem(filename, JSON.stringify(cells));
   }
 
-  // Grab any existing list data from the browser local storage. If none exist,
-  // then return a 100x100 array of 0.
+  // Prepare to save array to local storage.
+  async function saveLocalBoard(slot = 0) {
+    setIsLoading(true);
+    await localSaveData(slot);
+    setIteration(0);
+    setIsRandom(false);
+    setCurrentSlot(slot);
+    setIsLoading(false);
+  }
+
+  // Grab cell array data from the browser local storage. If none exist,
+  // then return a 100x100 array of 0. Currently, 3 save slots are supported.
   async function localLoadData(slot = 0) {
     const filename = "v1life" + slot;
     const data = JSON.parse(window.localStorage.getItem(filename)) || zeroArray;
     return data;
   }
 
+  // Prepare to load the cell array with locally saved data.
   async function getLocalBoard(slot = 0) {
     setIsLoading(true);
-    const dataArray = await localLoadData(slot);
-    setCells(dataArray);
+    const data = await localLoadData(slot);
+    setCells(data);
+    setIteration(0);
+    setIsRandom(false);
+    setCurrentSlot(slot);
     setIsLoading(false);
   }
 
@@ -71,8 +95,19 @@ export default function Home(props) {
   }
 
   async function getRandomBoard() {
+    setIsLoading(true);
     const data = await randomArray();
     setCells(data);
+    setIteration(0);
+    setIsRandom(true);
+    setIsLoading(false);
+  }
+
+  async function getClearBoard() {
+    setIsLoading(true);
+    setCells(zeroArray);
+    setIteration(0);
+    setIsLoading(false);
   }
 
   // Apply Conway's rules to a single cell to determine its fate.
@@ -136,6 +171,7 @@ export default function Home(props) {
         nextGenCells.push(row);
       }
       setCells(nextGenCells);
+      setIteration(iteration + 1);
     }
   }
 
@@ -212,17 +248,21 @@ export default function Home(props) {
           >
             {isColor ? "B/W" : "Color"}
           </button>
-          <button onClick={() => setDelay(5000)}>Slow</button>
+          <button onClick={() => setDelay(4000)}>Slow</button>
           <button onClick={() => setDelay(1000)}>Medium</button>
           <button onClick={() => setDelay(200)}>Fast</button>
+          <button onClick={() => getClearBoard()}>Clear</button>
           <button onClick={() => getRandomBoard()}>Random</button>
-          <button onClick={() => setCells(zeroArray)}>Clear</button>
           <button onClick={() => getLocalBoard(0)}>Load-0</button>
-          <button onClick={() => localSaveData(0)}>Save-0</button>
+          <button onClick={() => saveLocalBoard(0)}>Save-0</button>
           <button onClick={() => getLocalBoard(1)}>Load-1</button>
-          <button onClick={() => localSaveData(1)}>Save-1</button>
+          <button onClick={() => saveLocalBoard(1)}>Save-1</button>
           <button onClick={() => getLocalBoard(2)}>Load-2</button>
-          <button onClick={() => localSaveData(2)}>Save-2</button>
+          <button onClick={() => saveLocalBoard(2)}>Save-2</button>
+          <label>
+            Iteration: {iteration}, Slot:{" "}
+            {isRandom ? "Random" : currentSlot }
+          </label>
         </div>
       </div>
     </div>
