@@ -12,6 +12,7 @@ export default function Home(props) {
   const [isColor, setIsColor] = useState(true); // colors or b/w
   const [delay, setDelay] = useState(1000); // amount of delay for redraws
   const [iteration, setIteration] = useState(0); // current iteration of sim
+  const [maxIterations, setMaxIterations] = useState();
   const [isRandom, setIsRandom] = useState(true);
   const [currentSlot, setCurrentSlot] = useState(0);
   const zeroArray = new Array(yCellCount) // 2d array filled with zeros
@@ -24,6 +25,18 @@ export default function Home(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ignore warning - empty dependency array [] so only executed once
 
+  useEffect(() => {
+    const fetchMaxIterations = async () => {
+      const filename = "v1-life-max-iterations";
+      const result =
+        (await JSON.parse(window.localStorage.getItem(filename))) || 100;
+      setMaxIterations(result);
+    };
+    fetchMaxIterations();
+    console.log("max=", maxIterations);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Automatically calculates the next generation in delay milliseconds.
   useEffect(() => {
     if (isRunning) {
@@ -32,9 +45,9 @@ export default function Home(props) {
     }
   });
 
-  // Restarts the simulation after 300 iterations.
+  // Restarts the simulation after maxIterations.
   useEffect(() => {
-    if (iteration >= 100) {
+    if (iteration >= maxIterations) {
       isRandom ? getRandomBoard() : getLocalBoard(currentSlot);
     }
   });
@@ -260,8 +273,8 @@ export default function Home(props) {
           <button onClick={() => getLocalBoard(2)}>Load-2</button>
           <button onClick={() => saveLocalBoard(2)}>Save-2</button>
           <label>
-            Iteration: {iteration}, Slot:{" "}
-            {isRandom ? "Random" : currentSlot }
+            Iteration: {iteration}, Slot: {isRandom ? "Random" : currentSlot},
+            MaxIterations: {maxIterations}
           </label>
         </div>
       </div>

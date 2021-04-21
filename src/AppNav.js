@@ -11,6 +11,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import Home from "./Home";
+import Config from "./Config";
 import Help from "./Help";
 import About from "./About";
 import "./AppNav.css";
@@ -22,6 +23,11 @@ export default function AppNav() {
         <li className="nav-item">
           <NavLink className="nav-link" activeClassName="nav-active" to="/home">
             Home
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink className="nav-link" activeClassName="nav-active" to="/config">
+            Config
           </NavLink>
         </li>
         <li className="nav-item">
@@ -42,6 +48,9 @@ export default function AppNav() {
       <Switch>
         <Route exact path="/help">
           <Help />
+        </Route>
+        <Route exact path="/config">
+          <Config />
         </Route>
         <Route exact path="/about">
           <About />
